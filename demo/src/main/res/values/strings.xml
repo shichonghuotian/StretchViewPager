@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">StretchDemo</string>
+    <string name="gd.pull.normal">滑动</string>
+    <string name="gd.pull.refresh">释放进入下一页</string>
+</resources>

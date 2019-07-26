@@ -1,0 +1,37 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+android {
+    compileSdkVersion compileVer
+
+    defaultConfig {
+        minSdkVersion minVer
+        targetSdkVersion compileVer
+        versionCode 1
+        versionName "1.0"
+        consumerProguardFiles 'proguard-rules.pro'
+        sourceSets {
+            main{
+                java {
+                    exclude '**/test/*'
+                }
+                resources {
+                    exclude '**/test/*'
+                }
+            }
+        }
+    }
+    sourceSets {
+
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    compileOnly "com.android.support:support-v4:$supportVer"
+}
+
+//apply from: '../../bintray.gradle'
+
+
