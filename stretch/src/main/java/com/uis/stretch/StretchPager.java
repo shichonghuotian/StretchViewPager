@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -120,6 +121,9 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
 
     private int offsetX = -200;
 
+    private static final int Bessel_Width = 200;
+
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -130,6 +134,24 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
 //        final int count = getChildCount();//重新放置位置
+
+        if(rightView != null) {
+            removeView(rightView);
+
+            addEdgeView(rightView);
+            int w = getWidth();
+
+            int contentWidth = getAdapter().getCount() *( getWidth() ) - getPaddingRight() - getPaddingLeft();
+
+            int left = contentWidth - Bessel_Width;
+
+            int right = left + Bessel_Width;
+
+
+            rightView.layout(left,0, right,b);
+
+        }
+
     }
 
     @Override
@@ -237,6 +259,32 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
         return enable;
     }
 
+
+    ///1。有一点点延迟
+    //2。先向左拖动，再向右拖，会有一点点问题，没有滑动到正常的页码---处理成都滑动到最后一页即可
+    protected void scrollRightView(int dx) {
+
+        if(rightView != null) {
+
+            int contentWidth = getAdapter().getCount() *( getWidth() ) - getPaddingRight() - getPaddingLeft();
+
+//            int left = getWidth()  - Bessel_Width - (dx );
+            Log.e("wy","wy>> " + contentWidth + " " + getScrollX());
+
+
+            contentWidth += dx;
+
+
+
+//            rightView.setLeft(contentWidth);
+
+            //多加几个像素。。。
+            rightView.setRight(contentWidth );
+        }
+
+
+    }
+
     private void scrollByMove(int x) {
 //        addLeftRightEdge();
 
@@ -245,13 +293,18 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
         int scroll = Math.abs(getScrollX() - firstScrollX);
         double dx = Math.signum(-x) * (scroll > 0.9 * total ? (scroll > total ? 0 : 1) : 0.75 * Math.abs(x));
 
-//        double dx = Math.abs(x);
+
         scrollBy((int) dx, 0);
+        scrollRightView(scroll);
+
         if (null != listener) {
 //            listener.onScrolled(directionModel, getScrollDistance());
             listener.onScrolled(directionModel, scroll);
 
+
         }
+
+
 
     }
 
@@ -285,6 +338,12 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
        endScrollX = getScrollX();
         lastTotalDistance = w - getScrollX();
 
+
+//        lastTotalDistance < 0 向左拖动了
+//        >0 向右了
+
+
+
         isAnimalRunning = true;
         anim.addUpdateListener(this);
         anim.start();
@@ -301,12 +360,15 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
 
         int dx = (int)(lastTotalDistance * percent);
 
-        scrollTo(endScrollX - Math.abs(dx),0);
+        scrollTo(endScrollX + dx,0);
 
         if (null != listener) {
             listener.onScrolled(directionModel, Math.abs(firstScrollX - getScrollX()));
 
         }
+
+        scrollRightView(Math.abs(firstScrollX - getScrollX()));
+
         if (1.0f <= percent ) {
             anim.removeAllUpdateListeners();
             if (null != listener) listener.onRelease(directionModel);

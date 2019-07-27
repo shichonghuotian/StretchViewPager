@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.uis.stretch.OnStretchListener;
@@ -66,7 +65,7 @@ public class MyPagerView extends FrameLayout implements OnStretchListener {
 
 
         pagerView.setOnStretchListener(this);
-        Log.e("wy","wy -> " + "init");
+//        Log.e("wy","wy -> " + "init");
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.example.stretch.demo;
 
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -33,9 +32,15 @@ public class MainActivity extends AppCompatActivity implements OnStretchListener
         pager = findViewById(R.id.pager);
 
         myPagerView = findViewById(R.id.mypager);
-//        pager.setPageMargin(-40);
 
-//        pager.setPageMargin(30);
+
+        pager.setPageMargin(200);
+
+        pager.setPadding(200,0,200,0);
+        pager.setClipChildren(false);
+
+        pager.setClipToPadding(false);
+
 
         pager.setOffscreenPageLimit(3);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -64,23 +69,23 @@ public class MainActivity extends AppCompatActivity implements OnStretchListener
         leftView = LayoutInflater.from(this).inflate(R.layout.item_pager_left, null);
         rightView = LayoutInflater.from(this).inflate(R.layout.item_pager_right, null);
 
-        rightView = LayoutInflater.from(this).inflate(R.layout.right_view, null);
-        stretchBesselView = rightView.findViewById(R.id.streaview);
-        stretchBesselView.setLINK_LINE_WIDTH(-280);
+        stretchBesselView = (StretchBesselView) LayoutInflater.from(this).inflate(R.layout.right_view, null);
+//        stretchBesselView = rightView.findViewById(R.id.streaview);
+//        stretchBesselView.setLINK_LINE_WIDTH(-280);
 
         // TODO: 2019/7/25
-        pager.setRefreshView(null, rightView);
+        pager.setRefreshView(null, stretchBesselView);
 
         adapter = new FragAdapter(3, getSupportFragmentManager());
-//        pager.setAdapter(adapter);
-//        pager.setOnStretchListener(this);
+        pager.setAdapter(adapter);
+        pager.setOnStretchListener(this);
 
 
 
-        myPagerView.setOffscreenPageLimit(3);
-        myPagerView.setAdapter(adapter);
-
-        myPagerView.addOnPageChangeListener(null);
+//        myPagerView.setOffscreenPageLimit(3);
+//        myPagerView.setAdapter(adapter);
+//
+//        myPagerView.addOnPageChangeListener(null);
     }
 
     //    static final int Distance = (int) (Resources.getSystem().getDisplayMetrics().density * 80 + 0.5);
@@ -134,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements OnStretchListener
 
                 if (status == 1) {
                     dragEnd = true;
-                    startActivity(new Intent(MainActivity.this, Main2Activity.class));
+//                    startActivity(new Intent(MainActivity.this, Main2Activity.class));
                     dragEnd = false;
                 }
 
