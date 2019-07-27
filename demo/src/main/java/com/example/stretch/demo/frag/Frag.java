@@ -5,14 +5,12 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.RelativeLayout;
 
 import com.example.stretch.demo.R;
 
@@ -30,9 +28,9 @@ public class Frag extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.frg_icon,container,false);
 
-        ViewGroup.LayoutParams layoutParams = v.findViewById(R.id.fragmentIv).getLayoutParams();
-        layoutParams.width = getScreenWidth(getActivity()) - 120;
-        v.findViewById(R.id.fragmentIv).setLayoutParams(layoutParams);
+//        ViewGroup.LayoutParams layoutParams = v.findViewById(R.id.fragmentIv).getLayoutParams();
+//        layoutParams.width = getScreenWidth(getActivity()) ;
+//        v.findViewById(R.id.fragmentIv).setLayoutParams(layoutParams);
         //        recycler_view = v.findViewById(R.id.recycler_view);
 //        recyclerView = v.findViewById(R.id.recyclerView);
 //

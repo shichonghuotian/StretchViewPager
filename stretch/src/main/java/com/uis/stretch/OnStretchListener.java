@@ -12,6 +12,7 @@ public interface OnStretchListener {
      */
     void onScrolled(int direction,int distance);
 
+
     /**
      * 释放时状态，正在刷新 refreshing
      * @param direction model one of {@link StretchPager#STRETCH_RIGHT},{@link StretchPager#STRETCH_RIGHT};

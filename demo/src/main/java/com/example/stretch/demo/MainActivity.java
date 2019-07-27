@@ -2,10 +2,9 @@ package com.example.stretch.demo;
 
 import android.content.Intent;
 import android.content.res.Resources;
-import android.os.Handler;
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.stretch.demo.frag.FragAdapter;
 import com.uis.stretch.OnStretchListener;
@@ -27,14 +25,19 @@ public class MainActivity extends AppCompatActivity implements OnStretchListener
 
     StretchBesselView stretchBesselView;
 
+    MyPagerView myPagerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         pager = findViewById(R.id.pager);
 
-        pager.setPageMargin(-40);
+        myPagerView = findViewById(R.id.mypager);
+//        pager.setPageMargin(-40);
 
+//        pager.setPageMargin(30);
+
+        pager.setOffscreenPageLimit(3);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
@@ -69,10 +72,15 @@ public class MainActivity extends AppCompatActivity implements OnStretchListener
         pager.setRefreshView(null, rightView);
 
         adapter = new FragAdapter(3, getSupportFragmentManager());
-        pager.setAdapter(adapter);
-        pager.setOnStretchListener(this);
+//        pager.setAdapter(adapter);
+//        pager.setOnStretchListener(this);
 
 
+
+        myPagerView.setOffscreenPageLimit(3);
+        myPagerView.setAdapter(adapter);
+
+        myPagerView.addOnPageChangeListener(null);
     }
 
     //    static final int Distance = (int) (Resources.getSystem().getDisplayMetrics().density * 80 + 0.5);
@@ -111,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements OnStretchListener
 
 
 
-            stretchBesselView.setLINK_LINE_WIDTH(-280 + Math.abs(distance));
+//            stretchBesselView.setLINK_LINE_WIDTH(-280 + Math.abs(distance));
 
             Log.i("moon", "更改后 distance = .........................." + stretchBesselView.getLINK_LINE_WIDTH());
 

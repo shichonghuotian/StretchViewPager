@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -24,12 +25,12 @@ public class StretchBesselView extends View {
     public void setLINK_LINE_WIDTH(int LINK_LINE_WIDTH) {
         Log.i("moon" , "set >>>>>>>>"+LINK_LINE_WIDTH+"");
         this.LINK_LINE_WIDTH = LINK_LINE_WIDTH;
-        init();
+//        init();
         invalidate();
     }
 
     public int getLINK_LINE_WIDTH() {
-        return LINK_LINE_WIDTH;
+        return getWidth();
     }
 
     //连接线长度
@@ -59,37 +60,51 @@ public class StretchBesselView extends View {
 
     public StretchBesselView(Context context) {
         super(context);
-        init();
+        initResource();
     }
 
     public StretchBesselView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        initResource();
     }
 
     public StretchBesselView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        initResource();
     }
 
-    private void init() {
+    private void initResource() {
         mPaint.setAntiAlias(true);
         mPaint.setStrokeWidth(3f);
 
+
+        textLength = drawText.length();
+
+        backIconBitmap = BitmapFactory.decodeResource(getResources(),R.mipmap.back);
+
+        update();
+    }
+
+    private void init() {
+
+    }
+
+    public void update() {
         circleRectF = new RectF(-RADIUS + EXP_WIDTH, 0, EXP_WIDTH + RADIUS, 2 * RADIUS);
 
-        mRigtCircleRectF = new RectF(LINK_LINE_WIDTH + EXP_WIDTH + RADIUS, 0, EXP_WIDTH + 3 * RADIUS + LINK_LINE_WIDTH, 2 * RADIUS);
+        mRigtCircleRectF = new RectF(getLINK_LINE_WIDTH() + EXP_WIDTH + RADIUS, 0, EXP_WIDTH + 3 * RADIUS +
+                getLINK_LINE_WIDTH(), 2 * RADIUS);
 
         p1x = EXP_WIDTH;
         p1y = 0;
 
-        p2x = EXP_WIDTH + 2 * RADIUS + LINK_LINE_WIDTH;
+        p2x = EXP_WIDTH + 2 * RADIUS + getLINK_LINE_WIDTH();
         p2y = 0;
 
         p3x = EXP_WIDTH;
         p3y = 2 * RADIUS;
 
-        p4x = EXP_WIDTH + 2 * RADIUS + LINK_LINE_WIDTH;
+        p4x = EXP_WIDTH + 2 * RADIUS + getLINK_LINE_WIDTH();
         p4y = 2 * RADIUS;
 
         anchor1x = (p1x + p4x) / 2;
@@ -98,16 +113,19 @@ public class StretchBesselView extends View {
         anchor2x = (p2x + p3x) / 2;
         anchor2y = (p2y + p3y) / 2 - 110;
 
-        textLength = drawText.length();
-
-        backIconBitmap = BitmapFactory.decodeResource(getResources(),R.mipmap.back);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+//        if(true) {
+//            return;
+//        }
         //绘制左边的半圆+ 矩形
+        update();
+
+        canvas.clipRect(new Rect(0,0,getWidth(),getHeight()));
         mPath.lineTo(EXP_WIDTH, 0);
 
         mPath.moveTo(EXP_WIDTH, 0);
@@ -124,11 +142,11 @@ public class StretchBesselView extends View {
         canvas.drawPath(mPath, mPaint);
 
         //绘制右边半圆 + 矩形
-        mPath.moveTo(LINK_LINE_WIDTH + 2 * RADIUS + EXP_WIDTH, 0);
+        mPath.moveTo(getLINK_LINE_WIDTH() + 2 * RADIUS + EXP_WIDTH, 0);
 
-        mPath.lineTo(LINK_LINE_WIDTH + 2 * RADIUS + 2 * EXP_WIDTH, 0);
-        mPath.lineTo(LINK_LINE_WIDTH + 2 * RADIUS + 2 * EXP_WIDTH, 2 * RADIUS);
-        mPath.lineTo(LINK_LINE_WIDTH + 2 * RADIUS + EXP_WIDTH, 2 * RADIUS);
+        mPath.lineTo(getLINK_LINE_WIDTH() + 2 * RADIUS + 2 * EXP_WIDTH, 0);
+        mPath.lineTo(getLINK_LINE_WIDTH() + 2 * RADIUS + 2 * EXP_WIDTH, 2 * RADIUS);
+        mPath.lineTo(getLINK_LINE_WIDTH() + 2 * RADIUS + EXP_WIDTH, 2 * RADIUS);
         mPath.arcTo(mRigtCircleRectF, 90, 180, false);
 
         mPaint.setStyle(Paint.Style.FILL);
@@ -136,7 +154,7 @@ public class StretchBesselView extends View {
 
         canvas.drawPath(mPath, mPaint);
 
-        if (LINK_LINE_WIDTH > -220){
+        if (getLINK_LINE_WIDTH() > -220){
             // 绘制粘滞图形
             mPath.reset();
             mPath.moveTo(p1x, p1y);
@@ -149,7 +167,7 @@ public class StretchBesselView extends View {
             canvas.drawPath(mPath, mPaint);
         }
 
-        // 绘制文字和图标
+//        // 绘制文字和图标
         mPaint.setColor(Color.WHITE);
         mPaint.setTextSize(42);
 
@@ -157,7 +175,7 @@ public class StretchBesselView extends View {
             canvas.drawText(String.valueOf(drawText.charAt(i)), TEXT_OFFSET_LEFT, TEXT_OFFSET_TOP + i * 40, mPaint);
         }
 
-        canvas.drawBitmap(backIconBitmap, 20 ,170,mPaint);
+//        canvas.drawBitmap(backIconBitmap, 20 ,170,mPaint);
     }
 
     public void destroy(){

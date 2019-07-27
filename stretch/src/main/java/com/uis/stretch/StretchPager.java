@@ -44,12 +44,14 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
     private int expectDistance;
     private boolean stretchStatus = false;
     private OnStretchListener listener;
-    private final ValueAnimator anim = ValueAnimator.ofInt(0, 1);
+    private final ValueAnimator anim = ValueAnimator.ofInt(0, 100);
     private int activePointerId;
     /**
      * first touch down,current scrollx vaule
      */
     private int firstScrollX = 0;
+    private int endScrollX = 0;
+
     private int lastTotalDistance = 0;
     /**
      * 回弹动画正在播放
@@ -80,8 +82,12 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
         }
         if (rightView != null) {
             refreshModel |= STRETCH_RIGHT;
+
+//            addEdgeView(rightView);
         }
     }
+
+
 
     public int getRefreshModel() {
         return refreshModel;
@@ -115,16 +121,28 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
     private int offsetX = -200;
 
     @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+
+    }
+
+    @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        final int count = getChildCount();//重新放置位置
-        View child = getChildAt(count - 1);
-        if (child != null && (leftView == child || rightView == child)) {
-            int width = getMeasuredWidth();
-            int left = expectDistance + (child == leftView ? -width : width);
-            int right = left + width;
-            child.layout(left + offsetX, 0, right + offsetX, getMeasuredHeight());
-        }
+//        final int count = getChildCount();//重新放置位置
+    }
+
+    @Override
+    public void removeView(View view) {
+        super.removeView(view);
+
+    }
+
+    @Override
+    public void removeViewAt(int index) {
+        super.removeViewAt(index);
+
+
     }
 
     @Override
@@ -209,6 +227,7 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
         boolean stretchRight = (STRETCH_RIGHT & stretchModel) > 0;
         if ((stretchLeft || refreshLeft) && 0 == getCurrentItem() && distanceX > 0) {
             directionModel = STRETCH_LEFT;//left edge and distanceX GT 0
+            enable = false;
         } else if ((stretchRight || refreshRight) && getAdapter().getCount() == getCurrentItem() + 1 && distanceX < 0) {
             directionModel = STRETCH_RIGHT;//right edge and distanceX LT 0
         } else {
@@ -219,14 +238,21 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
     }
 
     private void scrollByMove(int x) {
-        addLeftRightEdge();
+//        addLeftRightEdge();
+
+
         int total = 8 * getWidth() / 10;
         int scroll = Math.abs(getScrollX() - firstScrollX);
         double dx = Math.signum(-x) * (scroll > 0.9 * total ? (scroll > total ? 0 : 1) : 0.75 * Math.abs(x));
+
+//        double dx = Math.abs(x);
         scrollBy((int) dx, 0);
         if (null != listener) {
-            listener.onScrolled(directionModel, getScrollDistance());
+//            listener.onScrolled(directionModel, getScrollDistance());
+            listener.onScrolled(directionModel, scroll);
+
         }
+
     }
 
     private void addLeftRightEdge() {
@@ -244,32 +270,48 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
     }
 
     private void scrollEndMove() {
-        final int scrollDistance = getScrollDistance();
-        if (null != listener) {
-            listener.onRefresh(directionModel, Math.abs(scrollDistance));
-        }
+//        final int scrollDistance = getScrollDistance();
+//        if (null != listener) {
+//            listener.onRefresh(directionModel, Math.abs(scrollDistance));
+//        }
         refreshDoneAnim();
     }
 
     private void refreshDoneAnim() {
+
+
+        int w = (getAdapter().getCount() -1) *( this.getWidth() - this.getPaddingLeft());
+
+       endScrollX = getScrollX();
+        lastTotalDistance = w - getScrollX();
+
         isAnimalRunning = true;
         anim.addUpdateListener(this);
         anim.start();
+
+
+
     }
 
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
+
+
         float percent = animation.getAnimatedFraction();
-        int distance = getScrollDistance();
-        int firstTotalDistance = distance + lastTotalDistance;
-        int dx = (int) ((percent > 1.0f ? 1.0 : percent) * firstTotalDistance) - lastTotalDistance;
-        lastTotalDistance += dx;
-        scrollBy(dx, 0);
-        if (1.0f <= percent || distance == 0) {
+
+        int dx = (int)(lastTotalDistance * percent);
+
+        scrollTo(endScrollX - Math.abs(dx),0);
+
+        if (null != listener) {
+            listener.onScrolled(directionModel, Math.abs(firstScrollX - getScrollX()));
+
+        }
+        if (1.0f <= percent ) {
             anim.removeAllUpdateListeners();
             if (null != listener) listener.onRelease(directionModel);
-            removeView(leftView);
-            removeView(rightView);
+//            removeView(leftView);
+//            removeView(rightView);
             lastTotalDistance = 0;
             isAnimalRunning = false;
             stretchStatus = false;

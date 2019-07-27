@@ -2,6 +2,8 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
+    android:clipChildren="false"
+
     android:layout_height="match_parent">
     <!--<android.support.v7.widget.RecyclerView-->
         <!--android:id="@+id/recycler_view"-->
@@ -16,8 +18,9 @@
     <ImageView
         android:id="@+id/fragmentIv"
         android:src="@mipmap/a"
+
         android:scaleType="centerCrop"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
 </RelativeLayout>
