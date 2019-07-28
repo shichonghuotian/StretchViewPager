@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -125,7 +124,7 @@ public class StretchBesselView extends View {
         //绘制左边的半圆+ 矩形
         update();
 
-        canvas.clipRect(new Rect(0,0,getWidth(),getHeight()));
+//        canvas.clipRect(new Rect(0,0,getWidth(),getHeight()));
         mPath.lineTo(EXP_WIDTH, 0);
 
         mPath.moveTo(EXP_WIDTH, 0);
