@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnStretchListener
 
         stretchBesselView = (StretchBesselView) LayoutInflater.from(this).inflate(R.layout.right_view, null);
 //        stretchBesselView = rightView.findViewById(R.id.streaview);
-//        stretchBesselView.setLINK_LINE_WIDTH(-280);
+//        stretchBesselView.setLinkLineWidth(-280);
 
         // TODO: 2019/7/25
         pager.setRefreshView(null, stretchBesselView);
@@ -124,12 +124,12 @@ public class MainActivity extends AppCompatActivity implements OnStretchListener
 
 
 
-//            stretchBesselView.setLINK_LINE_WIDTH(-280 + Math.abs(distance));
+//            stretchBesselView.setLinkLineWidth(-280 + Math.abs(distance));
 
-            Log.i("moon", "更改后 distance = .........................." + stretchBesselView.getLINK_LINE_WIDTH());
+            Log.i("moon", "更改后 distance = .........................." + stretchBesselView.getLinkLineWidth());
 
 //            if (Math.abs(distance) < 1){
-//                stretchBesselView.setLINK_LINE_WIDTH(-150);
+//                stretchBesselView.setLinkLineWidth(-150);
 //            }
 
             if (status != lastStatus) {

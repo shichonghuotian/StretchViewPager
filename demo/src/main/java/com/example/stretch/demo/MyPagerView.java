@@ -195,7 +195,7 @@ public class MyPagerView extends FrameLayout implements OnStretchListener {
 
 
 
-//        besselView.setLINK_LINE_WIDTH(besselView.getWidth());
+//        besselView.setLinkLineWidth(besselView.getWidth());
     }
 
     @Override

@@ -22,7 +22,7 @@ public class Main2Activity extends AppCompatActivity {
             public void onClick(View view) {
 
                 l += 10;
-                stretchBesselView.setLINK_LINE_WIDTH(l);
+                stretchBesselView.setLinkLineWidth(l);
 
             }
         });
@@ -31,7 +31,7 @@ public class Main2Activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 l-=10;
-                stretchBesselView.setLINK_LINE_WIDTH(l);
+                stretchBesselView.setLinkLineWidth(l);
             }
         });
     }
