@@ -4,7 +4,6 @@
 
 package com.uis.stretch;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,13 +12,13 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.widget.Scroller;
 
 /**
  * @author uis 2019/7/20
  */
-public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpdateListener {
+public class StretchPager extends ViewPager  {
     public static final int STRETCH_NONE = 0x00;
     /**
      * left stretch
@@ -47,7 +46,11 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
     private OnStretchListener listener;
 
     //可以使用scroller来处理滑动问题，只能新建一个，私有的无法使用
-    private final ValueAnimator anim = ValueAnimator.ofInt(0, 100);
+
+    private Scroller scroller;
+
+    private boolean isScrollerRunning;
+
     private int activePointerId;
     /**
      * first touch down,current scrollx vaule
@@ -67,14 +70,24 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
     private View leftView, rightView;
     private boolean isFirstMove, isMoveX;
 
+
+    private static final Interpolator sInterpolator = new Interpolator() {
+        public float getInterpolation(float t) {
+            --t;
+            return t * t * t * t * t + 1.0F;
+        }
+    };
+
+
     public StretchPager(@NonNull Context context) {
         this(context, null);
     }
 
     public StretchPager(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        anim.setInterpolator(new AccelerateDecelerateInterpolator());
-        anim.setDuration(300);
+
+        scroller = new Scroller(context,sInterpolator);
+
     }
 
     public void setRefreshView(View leftView, View rightView) {
@@ -113,13 +126,6 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
         listener = l;
     }
 
-    public void setAnimInterpolator(Interpolator interpolator) {
-        this.anim.setInterpolator(interpolator);
-    }
-
-    public void setAnimDuration(int duration) {
-        this.anim.setDuration(duration);
-    }
 
     private int offsetX = -200;
 
@@ -270,15 +276,7 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
 
             int contentWidth = getAdapter().getCount() *( getWidth() ) - getPaddingRight() - getPaddingLeft();
 
-//            int left = getWidth()  - Bessel_Width - (dx );
-            Log.e("wy","wy>> " + contentWidth + " " + getScrollX());
-
-
             contentWidth += dx;
-
-
-
-//            rightView.setLeft(contentWidth);
 
             //多加几个像素。。。
             rightView.setRight(contentWidth );
@@ -326,10 +324,7 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
     }
 
     private void scrollEndMove() {
-//        final int scrollDistance = getScrollDistance();
-//        if (null != listener) {
-//            listener.onRefresh(directionModel, Math.abs(scrollDistance));
-//        }
+
         refreshDoneAnim();
     }
 
@@ -341,51 +336,38 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
        endScrollX = getScrollX();
         lastTotalDistance = w - getScrollX();
 
+        //两个scroller 可能冲突
 
-//        lastTotalDistance < 0 向左拖动了
-//        >0 向右了
+          scroller.startScroll(getScrollX(),0,lastTotalDistance,0);
 
+          isScrollerRunning = true;
 
-
-        isAnimalRunning = true;
-        anim.addUpdateListener(this);
-        anim.start();
-
-
-
+        invalidate();
     }
 
     @Override
-    public void onAnimationUpdate(ValueAnimator animation) {
+    public void computeScroll() {
 
+        if(stretchStatus && isScrollerRunning) {
+            if (!scroller.isFinished()&&scroller.computeScrollOffset()) {
+                scrollTo(scroller.getCurrX(), scroller.getCurrY());
+                invalidate();
+            }else {
+                if(scroller.isFinished()) {
 
-        float percent = animation.getAnimatedFraction();
+                    Log.e("wy","wy>> " + "scrollEndMove" + " end");
 
-        int dx = (int)(lastTotalDistance * percent);
+                    lastTotalDistance = 0;
+                    isAnimalRunning = false;
+                    stretchStatus = false;
+                    isScrollerRunning = false;
+                }
 
-        scrollTo(endScrollX + dx,0);
-
-
-
-        if (null != listener) {
-            listener.onScrolled(directionModel, Math.abs(firstScrollX - getScrollX()));
+            }
+        }else {
+            super.computeScroll();
 
         }
 
-        scrollRightView(Math.abs(firstScrollX - getScrollX()));
-
-        if (1.0f <= percent ) {
-            anim.removeAllUpdateListeners();
-            if (null != listener) listener.onRelease(directionModel);
-//            removeView(leftView);
-//            removeView(rightView);
-            lastTotalDistance = 0;
-            isAnimalRunning = false;
-            stretchStatus = false;
-        }
-    }
-
-    private int getScrollDistance() {
-        return expectDistance - getScrollX();
     }
 }
