@@ -286,7 +286,6 @@ public class StretchPager extends ViewPager  {
     }
 
     private void scrollByMove(int x) {
-//        addLeftRightEdge();
 
 
         int total = 8 * getWidth() / 10;
@@ -298,6 +297,14 @@ public class StretchPager extends ViewPager  {
         scrollRightView(scroll);
 
 
+        //可以在这里添加事件，如果滑动到一定的距离
+
+//        if(distance > xxxx) {
+//
+//            listener.xxxxx(true);
+//        }
+
+
         if (null != listener) {
 //            listener.onScrolled(directionModel, getScrollDistance());
             listener.onScrolled(directionModel, scroll);
@@ -305,22 +312,6 @@ public class StretchPager extends ViewPager  {
 
         }
 
-
-
-    }
-
-    private void addLeftRightEdge() {
-        if (directionModel == STRETCH_LEFT && leftView != null && leftView.getParent() == null) {
-            addEdgeView(leftView);
-        } else if (directionModel == STRETCH_RIGHT && rightView != null && rightView.getParent() == null) {
-            addEdgeView(rightView);
-        }
-    }
-
-    private void addEdgeView(View view) {
-        LayoutParams p = new LayoutParams();
-        p.isDecor = true;
-        addView(view, p);
     }
 
     private void scrollEndMove() {
@@ -333,7 +324,6 @@ public class StretchPager extends ViewPager  {
 
         int w = (getAdapter().getCount() -1) *( this.getWidth() - this.getPaddingLeft());
 
-       endScrollX = getScrollX();
         lastTotalDistance = w - getScrollX();
 
         //两个scroller 可能冲突
@@ -370,4 +360,11 @@ public class StretchPager extends ViewPager  {
         }
 
     }
+
+    private void addEdgeView(View view) {
+        LayoutParams p = new LayoutParams();
+        p.isDecor = true;
+        addView(view, p);
+    }
+
 }
