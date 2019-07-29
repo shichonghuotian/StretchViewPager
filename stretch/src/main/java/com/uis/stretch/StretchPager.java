@@ -45,6 +45,8 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
     private int expectDistance;
     private boolean stretchStatus = false;
     private OnStretchListener listener;
+
+    //可以使用scroller来处理滑动问题，只能新建一个，私有的无法使用
     private final ValueAnimator anim = ValueAnimator.ofInt(0, 100);
     private int activePointerId;
     /**
@@ -260,7 +262,7 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
     }
 
 
-    ///1。有一点点延迟
+    ///1。有一点点延迟 ---- 这个是因为修改了canvas 的 clip 导致的，去掉既可以
     //2。先向左拖动，再向右拖，会有一点点问题，没有滑动到正常的页码---处理成都滑动到最后一页即可
     protected void scrollRightView(int dx) {
 
@@ -296,6 +298,7 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
 
         scrollBy((int) dx, 0);
         scrollRightView(scroll);
+
 
         if (null != listener) {
 //            listener.onScrolled(directionModel, getScrollDistance());
@@ -361,6 +364,8 @@ public class StretchPager extends ViewPager implements ValueAnimator.AnimatorUpd
         int dx = (int)(lastTotalDistance * percent);
 
         scrollTo(endScrollX + dx,0);
+
+
 
         if (null != listener) {
             listener.onScrolled(directionModel, Math.abs(firstScrollX - getScrollX()));
